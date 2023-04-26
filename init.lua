@@ -4,7 +4,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
@@ -158,9 +157,6 @@ require('lazy').setup({
   require 'bildls.debug',
 }, {})
 
-
-
-
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
@@ -172,7 +168,6 @@ vim.wo.number = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
-
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -466,6 +461,7 @@ cmp.setup {
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
+-- GoFormat autocomand
 local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.go",
