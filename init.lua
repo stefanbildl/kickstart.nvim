@@ -59,6 +59,26 @@ require('lazy').setup({
     },
   },
 
+
+  {
+    'simrat39/rust-tools.nvim',
+    config = function()
+      local rt = require("rust-tools");
+      rt.setup( {
+        server = {
+          on_attach = function(_, bufnr)
+            -- Hover actions
+            vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+            -- Code action groups
+            vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+          end,
+        }
+      });
+
+    end,
+
+  },
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -112,12 +132,20 @@ require('lazy').setup({
     },
   },
 
-  {
+  -- {
     -- Nordfox Theme
-    "EdenEast/nightfox.nvim",
-    priority = 1000,
+    -- "EdenEast/nightfox.nvim",
+    -- priority = 1000,
+    -- config = function()
+    --   vim.cmd.colorscheme 'nordfox'
+    -- end,
+  -- },
+
+  {
+    'rose-pine/neovim',
+    name = 'rose-pine',
     config = function()
-      vim.cmd.colorscheme 'nordfox'
+      vim.cmd.colorscheme 'rose-pine'
     end,
   },
 
@@ -128,7 +156,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'nordfox',
+        theme = 'rose-pine',
         component_separators = '|',
         section_separators = '',
       },
