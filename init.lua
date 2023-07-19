@@ -1,8 +1,8 @@
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -109,6 +109,7 @@ require('lazy').setup({
     ft = {"go", 'gomod'},
     build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
   },
+  { 'github/copilot.vim' },
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
@@ -467,10 +468,11 @@ end
 
 local servers = {
   -- clangd = {},
+  tsserver = {},
   gopls = {},
   eslint = {},
   rust_analyzer = {},
-  tsserver = {},
+  eslint = {},
 
   lua_ls = {
     Lua = {
@@ -532,7 +534,7 @@ cmp.setup {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
+    ['<C-k>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
@@ -554,4 +556,20 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     require('go.format').goimport()
   end,
   group = format_sync_grp,
+})
+
+
+
+-- EslintFixAll autocomand
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.ts,*.tsx,*.js,*.jsx",
+  group = format_sync_grp,
+  command = "EslintFixAll"
+})
+
+
+-- Disable diagnostics for node_modules
+vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
+  pattern = "*/node_modules/*",
+  command = "lua vim.diagnostic.disable(0)",
 })
