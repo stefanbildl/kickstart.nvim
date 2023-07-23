@@ -161,6 +161,7 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+  { 'ThePrimeagen/harpoon', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -204,7 +205,7 @@ vim.o.breakindent = true
 vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
-vim.o.updatetime = 250
+vim.o.updatetime = 150
 vim.o.timeout = true
 vim.o.timeoutlen = 300
 vim.o.completeopt = 'menuone,noselect'
@@ -229,6 +230,21 @@ vim.keymap.set({ 'n' }, '<leader>x', '<Cmd>:Ex<CR>');
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+
+vim.keymap.set('n', '<leader>h', "<Cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", { silent = true })
+vim.keymap.set('n', '<leader>n', "<Cmd>lua require('harpoon.ui').nav_next()<CR>", { silent = true })
+vim.keymap.set('n', '<leader>p', "<Cmd>lua require('harpoon.ui').nav_prev()<CR>", { silent = true })
+vim.keymap.set('n', '<leader>1', "<Cmd>lua require('harpoon.ui').nav_file(1)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>2', "<Cmd>lua require('harpoon.ui').nav_file(2)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>3', "<Cmd>lua require('harpoon.ui').nav_file(3)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>4', "<Cmd>lua require('harpoon.ui').nav_file(4)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>5', "<Cmd>lua require('harpoon.ui').nav_file(5)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>6', "<Cmd>lua require('harpoon.ui').nav_file(6)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>7', "<Cmd>lua require('harpoon.ui').nav_file(7)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>8', "<Cmd>lua require('harpoon.ui').nav_file(8)<CR>", { silent = true })
+vim.keymap.set('n', '<leader>m', "<Cmd>lua require('harpoon.mark').add_file()<CR>", { silent = true })
+vim.keymap.set('n', '<leader>m', "<Cmd>lua require('harpoon.mark').add_file()<CR>", { silent = true })
+
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
