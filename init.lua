@@ -457,6 +457,7 @@ local servers = {
   gopls = {},
   eslint = {},
   rust_analyzer = {},
+  svelte = {},
 
   lua_ls = {
     Lua = {
