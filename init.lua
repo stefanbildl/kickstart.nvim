@@ -557,6 +557,8 @@ local servers = {
   rust_analyzer = {},
   angularls = {},
   html = { filetypes = { 'html', 'twig', 'hbs'} },
+  svelte = {},
+
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
