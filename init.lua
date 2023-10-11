@@ -49,6 +49,57 @@ require('lazy').setup({
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
+
+      {
+        'mhartington/formatter.nvim',
+        config = function()
+          local util = require "formatter.util"
+
+          require("formatter").setup {
+          -- Enable or disable logging
+          logging = true,
+          -- Set the log level
+          log_level = vim.log.levels.WARN,
+          -- All formatter configurations are opt-in
+          filetype = {
+            -- Formatter configurations for filetype "lua" go here
+            -- and will be executed in order
+            lua = {
+              -- "formatter.filetypes.lua" defines default configurations for the
+              -- "lua" filetype
+              require("formatter.filetypes.lua").stylua,
+
+              -- You can also define your own configuration
+              function()
+                -- Supports conditional formatting
+                if util.get_current_buffer_file_name() == "special.lua" then
+                  return nil
+                end
+
+                -- Full specification of configurations is down below and in Vim help
+                -- files
+                return {
+                  exe = "stylua",
+                  args = {
+                    "--search-parent-directories",
+                    "--stdin-filepath",
+                    util.escape_path(util.get_current_buffer_file_path()),
+                    "--",
+                    "-",
+                  },
+                  stdin = true,
+                }
+              end
+            },
+
+            typescript = {
+              require("formatter.filetypes.typescript").prettier
+            }
+          }
+        }
+
+        end,
+      }
     },
   },
 
@@ -457,6 +508,7 @@ local servers = {
   gopls = {},
   eslint = {},
   rust_analyzer = {},
+  angularls = {},
 
   lua_ls = {
     Lua = {
@@ -533,17 +585,23 @@ cmp.setup {
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 -- GoFormat autocomand
-local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.go",
-  callback = function()
-    require('go.format').goimport()
-  end,
-  group = format_sync_grp,
-})
+-- local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   pattern = "*.go",
+--   callback = function()
+--     require('go.format').goimport()
+--   end,
+--   group = format_sync_grp,
+-- })
 
 -- Disable diagnostics for node_modules
 vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
   pattern = "*/node_modules/*",
   command = "lua vim.diagnostic.disable(0)",
+})
+
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = {"*.ts", "*.tsx", "*.js", "*.jsx"},
+  command = "FormatWrite",
 })
