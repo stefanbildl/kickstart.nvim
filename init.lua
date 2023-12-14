@@ -238,10 +238,11 @@ require('lazy').setup({
   },
 
   {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+
+    "ellisonleao/gruvbox.nvim",
+    name = 'gruvbox',
     config = function()
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme 'gruvbox'
     end,
   },
 
