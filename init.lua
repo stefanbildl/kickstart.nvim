@@ -3,10 +3,13 @@
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+-- vim.opt.shell = 'cmd.exe'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
+-- git bash support
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -59,48 +62,47 @@ require('lazy').setup({
           local util = require "formatter.util"
 
           require("formatter").setup {
-          -- Enable or disable logging
-          logging = true,
-          -- Set the log level
-          log_level = vim.log.levels.WARN,
-          -- All formatter configurations are opt-in
-          filetype = {
-            -- Formatter configurations for filetype "lua" go here
-            -- and will be executed in order
-            lua = {
-              -- "formatter.filetypes.lua" defines default configurations for the
-              -- "lua" filetype
-              require("formatter.filetypes.lua").stylua,
+            -- Enable or disable logging
+            logging = true,
+            -- Set the log level
+            log_level = vim.log.levels.WARN,
+            -- All formatter configurations are opt-in
+            filetype = {
+              -- Formatter configurations for filetype "lua" go here
+              -- and will be executed in order
+              lua = {
+                -- "formatter.filetypes.lua" defines default configurations for the
+                -- "lua" filetype
+                require("formatter.filetypes.lua").stylua,
 
-              -- You can also define your own configuration
-              function()
-                -- Supports conditional formatting
-                if util.get_current_buffer_file_name() == "special.lua" then
-                  return nil
+                -- You can also define your own configuration
+                function()
+                  -- Supports conditional formatting
+                  if util.get_current_buffer_file_name() == "special.lua" then
+                    return nil
+                  end
+
+                  -- Full specification of configurations is down below and in Vim help
+                  -- files
+                  return {
+                    exe = "stylua",
+                    args = {
+                      "--search-parent-directories",
+                      "--stdin-filepath",
+                      util.escape_path(util.get_current_buffer_file_path()),
+                      "--",
+                      "-",
+                    },
+                    stdin = true,
+                  }
                 end
+              },
 
-                -- Full specification of configurations is down below and in Vim help
-                -- files
-                return {
-                  exe = "stylua",
-                  args = {
-                    "--search-parent-directories",
-                    "--stdin-filepath",
-                    util.escape_path(util.get_current_buffer_file_path()),
-                    "--",
-                    "-",
-                  },
-                  stdin = true,
-                }
-              end
-            },
-
-            typescript = {
-              require("formatter.filetypes.typescript").prettier
+              typescript = {
+                require("formatter.filetypes.typescript").prettier
+              }
             }
           }
-        }
-
         end,
       }
     },
@@ -111,7 +113,7 @@ require('lazy').setup({
     'simrat39/rust-tools.nvim',
     config = function()
       local rt = require("rust-tools");
-      rt.setup( {
+      rt.setup({
         server = {
           on_attach = function(_, bufnr)
             -- Hover actions
@@ -121,7 +123,6 @@ require('lazy').setup({
           end,
         }
       });
-
     end,
 
   },
@@ -145,16 +146,26 @@ require('lazy').setup({
 
   {
     "ray-x/go.nvim",
-    dependencies = {  -- optional packages
+    dependencies = { -- optional packages
       "ray-x/guihua.lua",
       "neovim/nvim-lspconfig",
       "nvim-treesitter/nvim-treesitter",
     },
     config = function()
       require("go").setup()
+
+      local format_sync_grp = vim.api.nvim_create_augroup("GoImport", {})
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "*.go",
+        callback = function()
+         require('go.format').goimport()
+        end,
+        group = format_sync_grp,
+      })
+
     end,
-    event = {"CmdlineEnter"},
-    ft = {"go", 'gomod'},
+    event = { "CmdlineEnter" },
+    ft = { "go", 'gomod' },
     build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
   },
   { 'github/copilot.vim' },
@@ -270,7 +281,7 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
-  { 'ThePrimeagen/harpoon', opts = {} },
+  { 'ThePrimeagen/harpoon',  opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -458,7 +469,7 @@ end
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = {  'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+    ensure_installed = { 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
@@ -540,10 +551,10 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- next greatest remap ever : asbjornHaland
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
-vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 -- This is going to get me cancelled
 vim.keymap.set("i", "<C-c>", "<Esc>")
@@ -633,7 +644,7 @@ require('mason-lspconfig').setup()
 local function ts_organize_imports()
   local params = {
     command = "_typescript.organizeImports",
-    arguments = {vim.api.nvim_buf_get_name(0)},
+    arguments = { vim.api.nvim_buf_get_name(0) },
     title = ""
   }
   vim.lsp.buf.execute_command(params)
@@ -646,7 +657,8 @@ local servers = {
   eslint = {},
   rust_analyzer = {},
   angularls = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
+  cssls = {},
   svelte = {},
 
   lua_ls = {
@@ -729,26 +741,71 @@ cmp.setup {
   },
 }
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
--- GoFormat autocomand
--- local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
--- vim.api.nvim_create_autocmd("BufWritePre", {
---   pattern = "*.go",
---   callback = function()
---     require('go.format').goimport()
---   end,
---   group = format_sync_grp,
--- })
-
 -- Disable diagnostics for node_modules
-vim.api.nvim_create_autocmd({"BufRead","BufNewFile"}, {
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = "*/node_modules/*",
   command = "lua vim.diagnostic.disable(0)",
 })
 
 
 vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = {"*.ts", "*.tsx", "*.js", "*.jsx"},
+  pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
   command = "FormatWrite",
 })
+
+
+vim.api.nvim_create_user_command('SMSPost',
+  function()
+    local handle = io.popen("bash -c '~/sms/post.sh " .. vim.fn.expand("%") .. " 2>&1' | jq")
+    if handle == nil then
+      print("handle is nil")
+      return
+    end
+    local result = handle:read("*a")
+    handle:close()
+    print(result)
+  end,
+  { nargs = 0 })
+
+
+vim.api.nvim_create_user_command('SMSPut',
+  function()
+    local handle = io.popen("bash -c '~/sms/put.sh " .. vim.fn.expand("%") .. "  2>&1' | jq")
+    if handle == nil then
+      print("handle is nil")
+      return
+    end
+    local result = handle:read("*a")
+    handle:close()
+    print(result)
+  end,
+  { nargs = 0 })
+
+
+vim.api.nvim_create_user_command('SMSPostProd',
+  function()
+    local handle = io.popen("bash -c '~/sms/post.sh " .. vim.fn.expand("%") .. " prod 2>&1' | jq")
+    if handle == nil then
+      print("handle is nil")
+      return
+    end
+    local result = handle:read("*a")
+    handle:close()
+    print(result)
+  end,
+  { nargs = 0 })
+
+
+vim.api.nvim_create_user_command('SMSPutProd',
+  function()
+    local handle = io.popen("bash -c '~/sms/put.sh " .. vim.fn.expand("%") .. " prod 2>&1' | jq")
+    if handle == nil then
+      print("handle is nil")
+      return
+    end
+    local result = handle:read("*a")
+    handle:close()
+    print(result)
+  end,
+  { nargs = 0 })
+
