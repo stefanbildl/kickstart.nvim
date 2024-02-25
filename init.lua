@@ -238,11 +238,10 @@ require('lazy').setup({
   },
 
   {
-
-    "ellisonleao/gruvbox.nvim",
-    name = 'gruvbox',
+    "sainnhe/sonokai",
+    name = 'sonokai',
     config = function()
-      vim.cmd.colorscheme 'gruvbox'
+      vim.cmd.colorscheme 'sonokai'
     end,
   },
 
