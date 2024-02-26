@@ -128,6 +128,10 @@ require('lazy').setup({
   },
 
   {
+    'vimwiki/vimwiki'
+  },
+
+  {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
