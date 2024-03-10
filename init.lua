@@ -260,12 +260,12 @@ require('lazy').setup({
   },
 
   {
-    "sainnhe/sonokai",
+    "folke/tokyonight.nvim",
     priority = 1000,
     lazy = false,
-    name = 'sonokai',
+    name = 'tokyonight',
     config = function()
-      vim.cmd.colorscheme 'sonokai'
+      vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
 
