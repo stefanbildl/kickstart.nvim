@@ -3,7 +3,7 @@
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
--- vim.opt.shell = 'cmd.exe'
+vim.opt.shell = 'cmd.exe'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -186,7 +186,9 @@ require('lazy').setup({
   { 'github/copilot.vim' },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim', opts = {
+     notify = false,
+  } },
 
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
@@ -264,12 +266,12 @@ require('lazy').setup({
   },
 
   {
-    "sainnhe/sonokai",
+    "catppuccin/nvim",
     priority = 1000,
     lazy = false,
-    name = 'sonokai',
+    name = 'catppuccin',
     config = function()
-      vim.cmd.colorscheme 'sonokai'
+      vim.cmd.colorscheme 'catppuccin-macchiato'
     end,
   },
 
@@ -666,18 +668,10 @@ require('mason-lspconfig').setup()
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 
-local function ts_organize_imports()
-  local params = {
-    command = "_typescript.organizeImports",
-    arguments = { vim.api.nvim_buf_get_name(0) },
-    title = ""
-  }
-  vim.lsp.buf.execute_command(params)
-end
 
 local servers = {
   -- clangd = {},
-  tsserver = {},
+  ts_ls = {},
   gopls = {},
   eslint = {},
   rust_analyzer = {},
@@ -696,14 +690,25 @@ local servers = {
   },
 }
 
+local function organize_imports()
+  local params = {
+    command = "_typescript.organizeImports",
+    arguments = {vim.api.nvim_buf_get_name(0)},
+    title = ""
+  }
+  vim.lsp.buf.execute_command(params)
+end
+
+
 local commands = {
-  tsserver = {
+  ts_ls = {
     OrganizeImports = {
-      ts_organize_imports,
+      organize_imports,
       description = "Organize Imports"
     }
   }
 }
+
 
 -- Setup neovim lua configuration
 require('neodev').setup()
